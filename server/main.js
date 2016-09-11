@@ -30,9 +30,9 @@ const roleOrder = [
 	Roles.SerialKiller,
 	Roles.Doctor,
 	Roles.MobGrunt,
-	Roles.Vigilante,
 	Roles.Villager,
-	Roles.Mason,
+	Roles.Villager,
+	Roles.Villager,
 	Roles.MobGrunt,
 	Roles.Villager,
 	Roles.Doctor,
@@ -167,13 +167,15 @@ Meteor.startup(() => {
 						}
 					}
 
-					console.log(JSON.stringify(target));
-					console.log(targetInterest);
-					for (i = 0; i < target.length; i++) {
-						Lynchs.insert({
-							id: players[i],
-							name: Players.find({ id: players[i]}).fetch()[0].name
-						});
+					if (targetInterest > (Players.find({ dead: false }).count() / 2)) {
+						console.log(JSON.stringify(target));
+						console.log(targetInterest);
+						for (i = 0; i < target.length; i++) {
+							Lynchs.insert({
+								id: players[i],
+								name: Players.find({ id: players[i]}).fetch()[0].name
+							});
+						}
 					}
 
 					Votes.remove({ });
@@ -259,7 +261,7 @@ Meteor.startup(() => {
 								});
 								break;
 							case 'Change Roles':
-								target.role = action.role;
+								Players.update(target._id, { $set: { roles: action.role } });
 								Results.insert({
 									id: target.id,
 									msg: 'You have become the Mafioso'

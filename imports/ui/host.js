@@ -38,7 +38,7 @@ Template.host.onCreated(() => {
 
 Template.hostview.onCreated(() => {
 	responsiveVoice.speak('the game has started.  it is day time.');
-	setTimeout(nextPhaseFn, 30000);
+	// setTimeout(nextPhaseFn, 30000);
 });
 
 Template.host.helpers({
