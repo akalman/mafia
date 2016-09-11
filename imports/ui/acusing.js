@@ -20,7 +20,7 @@ Template.acusing.helpers({
 });
 
 Template.acusing.events({
-	'click .vote'(event, template) {
+	'click .vote': (event, template) => {
 		event.preventDefault();
 
 		let vote = Votes.find({ id: Session.get('id') }).fetch();

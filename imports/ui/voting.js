@@ -27,7 +27,7 @@ Template.vote.events({
 		let vote = Votes.find({ id: Session.get('id') }).fetch();
 
 		if (vote.length > 0) {
-			Votes.update(value._id, { $set: { value: 'yes' } });
+			Votes.update(vote[0]._id, { $set: { value: 'yes' } });
 		}
 		else {
 			Votes.insert({ id: Session.get('id'), value: 'yes' });
@@ -39,7 +39,7 @@ Template.vote.events({
 		let vote = Votes.find({ id: Session.get('id') }).fetch();
 
 		if (vote.length > 0) {
-			Votes.update(value._id, { $set: { value: 'no' } });
+			Votes.update(vote[0]._id, { $set: { value: 'no' } });
 		}
 		else {
 			Votes.insert({ id: Session.get('id'), value: 'no' });

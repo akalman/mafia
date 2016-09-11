@@ -69,7 +69,7 @@ Template.unarymenu.events({
 		let value = event.target.value;
 
 		if (action.length > 0) {
-			Actions.update(action._id, { $set: { value: value } });
+			Actions.update(action[0]._id, { $set: { value: value } });
 		}
 		else {
 			Actions.insert({
