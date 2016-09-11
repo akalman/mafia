@@ -5,9 +5,9 @@ import { Players } from '../api/players.js';
 import { Games } from '../api/games.js';
 import { Messages } from '../api/messages.js';
 import { Actions } from '../api/actions.js';
-import { Roles } from '../api/roles.js';
 
-import { Teams } from '../api/teams.js'
+import { Roles } from '../types/roles.js';
+import { Teams } from '../types/teams.js'
 
 import './night.html';
 

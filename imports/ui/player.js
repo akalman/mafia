@@ -7,6 +7,8 @@ import { Rooms } from '../api/rooms.js';
 import { Games } from '../api/games.js';
 import { Players } from '../api/players.js';
 
+import { Phases } from '../types/phases.js';
+
 import './player.html';
 
 Template.player.helpers({
@@ -14,22 +16,22 @@ Template.player.helpers({
 		return Players.find({ id: Session.get('id') }).fetch()[0].role.name;
 	},
 	showConversation() {
-		return Games.find({ }).fetch()[0].state === 'day-conversation';
+		return Games.find({ }).fetch()[0].state === Phases.Conversation;
 	},
 	showAcusing() {
-		return Games.find({ }).fetch()[0].state === 'day-acuse';
+		return Games.find({ }).fetch()[0].state === Phases.Accusation;
 	},
 	showVoting() {
-		return Games.find({ }).fetch()[0].state === 'day-vote';
+		return Games.find({ }).fetch()[0].state === Phases.Lynching;
 	},
 	showNight() {
-		return Games.find({ }).fetch()[0].state === 'night';
+		return Games.find({ }).fetch()[0].state === Phases.Night;
 	},
 	showNightMessages() {
-		return Games.find({ }).fetch()[0].state === 'night-result';
+		return Games.find({ }).fetch()[0].state === Phases.NightMessage;
 	},
 	gameOver() {
-		return Games.find({ }).fetch()[0].state === 'game-over';
+		return Games.find({ }).fetch()[0].state === Phases.GameOver;
 	},
 	showWait() {
 		return true;

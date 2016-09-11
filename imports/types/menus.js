@@ -1,4 +1,4 @@
 export const Menus = {
-	Boolean: 'Boolean',
+	Boolean: 'boolean',
 	Unary: 'unary'
 };

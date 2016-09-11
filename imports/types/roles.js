@@ -16,7 +16,7 @@ export const Roles = {
 		alignment: Teams.Town,
 		menu: Menus.Unary,
 		priority: 70,
-		menuFilter: (player, session) => player.dead || player.id === session.get('id')
+		menuFilter: (player, session) => player.dead
 	},
 	Vigilante: {
 		name: 'Vigilante',

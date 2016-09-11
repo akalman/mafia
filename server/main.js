@@ -10,15 +10,16 @@ import { Actions } from '../imports/api/actions.js';
 import { Voices } from '../imports/api/voices.js';
 import { Results } from '../imports/api/results.js';
 
-import { Teams } from '../imports/api/teams.js';
-import { Roles } from '../imports/api/roles.js';
+import { Teams } from '../imports/types/teams.js';
+import { Roles } from '../imports/types/roles.js';
+import { Phases } from '../imports/types/phases.js'
 
 const nextPhase = {
-	'day-conversation': 'day-acuse',
-	'day-acuse': 'day-vote',
-	'day-vote': 'night',
-	'night': 'night-result',
-	'night-result': 'day-conversation'
+	[Phases.Conversation]: Phases.Accusation,
+	[Phases.Accusation]: Phases.Lynching,
+	[Phases.Lynching]: Phases.Night,
+	[Phases.Night]: Phases.NightMessage,
+	[Phases.NightMessage]: Phases.Conversation
 };
 
 const roleOrder = [
@@ -55,7 +56,7 @@ function checkGameOver() {
 	}
 
 	if (Object.keys(remainingTeams).length === 1) {
-		Games.update(Games.findOne({ })._id, { $set: { state: 'game-over' } });
+		Games.update(Games.findOne({ })._id, { $set: { state: Phases.GameOver } });
 		Voices.insert({
 			content: 'Game over. '
 				+ Object.keys(remainingTeams)[0]
@@ -123,7 +124,7 @@ Meteor.startup(() => {
 				return;
 			}
 
-			Games.insert({ state: 'day-conversation' });
+			Games.insert({ state: Phases.Conversation });
 
 			for (let i = 0; i < players.length; i++) {
 				Players.update(players[i]._id, { $set: {
@@ -137,10 +138,10 @@ Meteor.startup(() => {
 			let game = Games.find({ }).fetch()[0];
 
 			switch(game.state) {
-				case 'day-conversation':
+				case Phases.Conversation:
 					Voices.insert({ content: 'begin acusing' });
 					break;
-				case 'day-acuse':
+				case Phases.Accusation:
 					let votes = Votes.find({ }).fetch();
 					let playerVotes = { };
 					for (let i = 0; i < votes.length; i++) {
@@ -181,7 +182,7 @@ Meteor.startup(() => {
 						Voices.insert({ content: 'Someone is on trial' });
 					}
 					break;
-				case 'day-vote':
+				case Phases.Lynching:
 					votes = Votes.find({ }).fetch();
 					playerVotes = { yes: 0, no: 0 };
 					for (i = 0; i < votes.length; i++) {
@@ -221,7 +222,7 @@ Meteor.startup(() => {
 
 					Voices.insert({ content: 'It is now night time' });
 					break;
-				case 'night':
+				case Phases.Night:
 					Voices.insert({ content: 'night is over.'});
 					let actions = Actions.find({ }, { sort: [['priority', 'desc']] }).fetch();
 					var action = actions.length > 0 ? actions[0] : null;
@@ -261,7 +262,7 @@ Meteor.startup(() => {
 						action = actions.length > 0 ? actions[0] : null;
 					}
 					break;
-				case 'night-result':
+				case Phases.NightMessage:
 					Results.remove({ });
 					Messages.remove({ });
 					break;

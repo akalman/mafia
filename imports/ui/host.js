@@ -6,6 +6,8 @@ import { Players } from '../api/players.js';
 import { Games } from '../api/games.js';
 import { Voices } from '../api/voices.js';
 
+import { Phases } from '../types/phases.js';
+
 import './host.html';
 
 let messages = [];
@@ -58,7 +60,7 @@ Template.hostview.helpers({
 		return Games.find({ }).fetch()[0].state;
 	},
 	gameOver() {
-		return Games.find({ }).fetch()[0].state === 'game-over';
+		return Games.find({ }).fetch()[0].state === Phases.GameOver;
 	}
 });
 
