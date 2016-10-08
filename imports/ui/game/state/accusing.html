@@ -1,0 +1,9 @@
+<template name="accusing">
+  <div class="accusing-container">
+    {{#each players }}
+      {{#if isNotMe id }}
+        <button class="btn btn-primary acuse" value="{{id}}">{{name}}</button>
+      {{/if}}
+    {{/each}}
+</div>
+</template>

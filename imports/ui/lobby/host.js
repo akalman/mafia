@@ -6,13 +6,13 @@ import { Players } from '../../api/players.js';
 import './host.html';
 
 Template.host.helpers({
-	players() {
+	players: () => {
 		return Players.find({ });
 	}
 });
 
 Template.host.events({
-	'click .start-game'(event) {
+	'click .start-game': (event) => {
 		event.preventDefault();
 		
 		Meteor.call('startGame');

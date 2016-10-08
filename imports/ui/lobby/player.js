@@ -5,7 +5,7 @@ import { Players } from '../../api/players.js';
 import './player.html';
 
 Template.player.helpers({
-	players() {
+	players: () => {
 		return Players.find({ });
 	}
 });

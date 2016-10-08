@@ -7,7 +7,37 @@ body {
 	border: black 1px solid;
 }
 
-.debug-header, .host-header {
+.action-header {
+	line-height: 33px;
+	padding-left: 20px !important;
+}
+
+.action-container, .accusing-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	align-content: center;
+}
+
+.action-container {
+	height: calc(100% - 40px);
+}
+
+.action-target, .acuse {
+	margin: 5px;
+}
+
+.state-container, .gameover-container, .gamehost-container {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.debug-header, .host-header, .action-header {
 	border-bottom: 1px solid black;
 	padding: 2px;
 	height: 39px;
@@ -15,9 +45,37 @@ body {
 	width: 100%;
 }
 
+.game-footer, .chat-footer {
+	border-top: 1px solid black;
+	padding: 2px;
+	height: 39px;
+	background-color: #DDD;
+	width: 100%;
+}
+
+.game-footer .btn-group {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.game-footer .btn {
+	width: 30%;
+}
+
 .body-content {
 	height: calc(100% - 39px);
-	background-color: #AAA;
+	background-color: #B8B8B8;
+}
+
+.game-view {
+	height: calc(100% - 40px);
+}
+
+.chat-container {
+	height: calc(100% - 40px);
+	overflow-y: scroll;
 }
 
 .create-game-container {
@@ -30,6 +88,15 @@ body {
 .create-game {
 	height: 50%;
 	width: 80%;
+}
+
+.chat {
+	height: 100%;
+}
+
+.chat-list {
+	margin: 0;
+	padding: 10px;
 }
 
 .join-game-container {
@@ -54,6 +121,6 @@ body {
 	padding-top: 10px;
 }
 
-.player {
+.player, .chat-log {
 	margin: 0 10px;
 }

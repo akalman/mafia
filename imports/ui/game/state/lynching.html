@@ -1,0 +1,19 @@
+<template name="lynching">
+  <div class="lynching-container">
+    <div>
+      {{#if amTarget }}
+        You are on trial
+      {{else}}
+        {{ target }} is on trial
+      {{/if}}
+    </div>
+
+    {{#if amTarget }}
+    {{else}}
+      <div class="btn-group">
+        <button class="btn btn-primary yes">Yes</button>
+        <button class="btn btn-primary no">No</button>
+      </div>
+    {{/if}}
+  </div>
+</template>

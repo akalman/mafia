@@ -1,3 +1,11 @@
 <template name="game">
-  Game
+  {{#if isHost}}
+    {{> gamehost}}
+  {{else}} {{#if isDead}}
+    {{> gameover}}
+  {{else}}
+    {{> gameview}}
+
+  {{/if}}
+  {{/if}}
 </template>

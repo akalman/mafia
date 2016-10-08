@@ -62,6 +62,13 @@ function checkGameOver() {
 				+ Object.keys(remainingTeams)[0]
 				+ ' wins'
 		});
+		Messages.insert({
+			id: 'global',
+			from: 'global',
+			content: 'Game over. '
+				+ Object.keys(remainingTeams)[0]
+				+ ' wins'
+		});
 	}
 }
 
@@ -73,26 +80,47 @@ function kill(id) {
 	}
 
 	Players.update(player._id, { $set: { dead: true } });
-	if (player.role.name === Roles.Mafioso.name) {
-		let mafia = Players.find({ role: { alignment: Teams.Mafia }, dead: false });
-		if (mafia.length > 1) {
-			Actions.insert({
-				type: 'Change Roles',
-				target: mafia[0].id,
-				role: Roles.Mafioso,
-				priority: 100
-			});
-		}
-	}
 	return true;
+}
+
+function ensureMafiaHasKillRole() {
+	let mafioso = Players.findOne({ 'role.name': Roles.Mafioso.name, dead: false });
+	if (!!mafioso) {
+		return;
+	}
+	console.log('creating new mafioso');
+
+	let nextMafioso = Players.findOne({ 'role.alignment': Teams.Mafia, dead: false });
+	if (!nextMafioso) {
+		return;
+	}
+	console.log('found new mafioso');
+
+	Players.update(nextMafioso._id, { $set: { role: Roles.Mafioso } });
+	Messages.insert({
+		id: nextMafioso.id,
+		from: 'you',
+		content: 'You have become the Mafioso'
+	});
 }
 
 function simpleKillAction(action, player, target, source) {
 	let result = kill(action.value);
 	if (result) {
 		Results.insert({ id: player.id, msg: 'You successfully killed ' + target.name });
+		Messages.insert({ id: player.id, from: 'you', content: 'You successfully killed ' + target.name });
 		Results.insert({ id: target.id, msg: 'You were killed' });
+		Messages.insert({ id: target.id, from: 'you', content: 'You were killed' });
 		Voices.insert({
+			content: target.name
+				+ ' was killed by '
+				+ source
+				+ '.  Their role was '
+				+ target.role.name
+		});
+		Messages.insert({
+			id: 'global',
+			from: 'global',
 			content: target.name
 				+ ' was killed by '
 				+ source
@@ -101,7 +129,9 @@ function simpleKillAction(action, player, target, source) {
 		});
 	} else {
 		Results.insert({ id: player.id, msg: target.name + ' was immune' });
+		Messages.insert({ id: player.id, from: 'you', content: target.name + ' was immune' });
 		Results.insert({ id: target.id, msg: 'Someone tried to kill you but you were immune' });
+		Messages.insert({ id: target.id, from: 'you', content: 'Someone tried to kill you but you were immune' });
 	}
 }
 
@@ -140,6 +170,7 @@ Meteor.startup(() => {
 			switch(game.state) {
 				case Phases.Conversation:
 					Voices.insert({ content: 'begin acusing' });
+					Messages.insert({ id: 'global', from: 'global', content: 'begin acusing' });
 					break;
 				case Phases.Accusation:
 					let votes = Votes.find({ }).fetch();
@@ -178,8 +209,10 @@ Meteor.startup(() => {
 					if (Lynchs.find({ }).count() === 0) {
 						game.state = nextPhase[game.state];
 						Voices.insert({ content: 'It is now night time' });
+						Messages.insert({ id: 'global', from: 'global', content: 'It is now night time' });
 					} else {
 						Voices.insert({ content: 'Someone is on trial' });
+						Messages.insert({ id: 'global', from: 'global', content: 'Someone is on trial' });
 					}
 					break;
 				case Phases.Lynching:
@@ -194,6 +227,7 @@ Meteor.startup(() => {
 					if (playerVotes.yes > playerVotes.no) {
 						Players.update(player._id, { $set: { dead: true } });
 						Lynchs.remove({ });
+						ensureMafiaHasKillRole();
 					}
 
 					Lynchs.remove(lynch._id);
@@ -203,7 +237,18 @@ Meteor.startup(() => {
 						content: player.name
 							+ ' was found ' 
 							+ (playerVotes.yes > playerVotes.no ? 'guilty' : 'innocent')
-							+ 'with a vote of '
+							+ ' with a vote of '
+							+ playerVotes.yes
+							+ ' to '
+							+ playerVotes.no
+					});
+					Messages.insert({
+						id: 'global',
+						from: 'global',
+						content: player.name
+							+ ' was found ' 
+							+ (playerVotes.yes > playerVotes.no ? 'guilty' : 'innocent')
+							+ ' with a vote of '
 							+ playerVotes.yes
 							+ ' to '
 							+ playerVotes.no
@@ -214,6 +259,12 @@ Meteor.startup(() => {
 							content: 'their role was '
 								+ player.role.name
 						});
+						Messages.insert({
+							id: 'global',
+							from: 'global',
+							content: 'their role was '
+								+ player.role.name
+						});
 					}
 
 					if (Lynchs.find({ }).count() > 0) {
@@ -221,9 +272,11 @@ Meteor.startup(() => {
 					}
 
 					Voices.insert({ content: 'It is now night time' });
+					Messages.insert({ id: 'global', from: 'global', content: 'It is now night time' });
 					break;
 				case Phases.Night:
 					Voices.insert({ content: 'night is over.'});
+					Messages.insert({ id: 'global', from: 'global', content: 'night is over.' });
 					let actions = Actions.find({ }, { sort: [['priority', 'desc']] }).fetch();
 					var action = actions.length > 0 ? actions[0] : null;
 					while (action) {
@@ -247,12 +300,6 @@ Meteor.startup(() => {
 									priority: -1
 								});
 								break;
-							case 'Change Roles':
-								Players.update(target._id, { $set: { roles: action.role } });
-								Results.insert({
-									id: target.id,
-									msg: 'You have become the Mafioso'
-								});
 							case 'Remove Immunity':
 								Players.update(target._id, { $set: { isImmune: target.role.isImmune || false } });
 						}
@@ -260,7 +307,8 @@ Meteor.startup(() => {
 						Actions.remove(action._id);
 						actions = Actions.find({ }, { sort: [['priority', 'desc']] }).fetch();
 						action = actions.length > 0 ? actions[0] : null;
-					}
+					}					
+					ensureMafiaHasKillRole();
 					break;
 				case Phases.NightMessage:
 					Results.remove({ });

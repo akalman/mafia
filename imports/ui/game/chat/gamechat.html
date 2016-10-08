@@ -1,0 +1,14 @@
+<template name="gamechat">
+  <div class="chat">
+    <div class="chat-container">
+      <ul class="list-group chat-list">
+        {{#each messages}}
+          <li class="list-group-item chat-log">{{from}}: {{content}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="chat-footer">
+      <input type="text" name="messagebox"><button class="btn btn-primary send">Send</button>
+    </div>
+</div>
+</template>

@@ -1,4 +1,5 @@
 export const Teams = {
 	Town: 'town',
-	Mafia: 'mafia'
+	Mafia: 'mafia',
+	SerialKiller: 'serialkiller'
 };

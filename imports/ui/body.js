@@ -4,7 +4,6 @@ import { Session } from 'meteor/session';
 import { Random } from 'meteor/random';
 
 import { Games } from '../api/games.js';
-import { Players } from '../api/players.js';
 
 import './body.html';
 

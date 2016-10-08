@@ -10,6 +10,11 @@ Template.body.events({
 		event.preventDefault();
 
 		var name = event.currentTarget.previousElementSibling.value;
+
+		if (name === 'general' || name === 'you' || name === '') {
+			return;
+		}
+
 		Players.insert({ name: name, id: Session.get('id') });
 	}
 });

@@ -1,0 +1,13 @@
+<template name="gamestate">
+  <div class="state-container">
+    <div>Game State: {{ state }}</div>
+
+    {{#if isAccusing}}
+      {{> accusing}}
+    {{/if}}
+
+    {{#if isLynching}}
+      {{> lynching}}
+    {{/if}}
+  </div>
+</template>

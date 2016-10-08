@@ -1,0 +1,30 @@
+<template name="gameview">
+  <div class="game-view">
+    {{#if inChat}}
+      {{> gamechat}}
+    {{else}} {{#if inAction}}
+      {{> gameaction}}
+    {{else}}
+      {{> gamestate}}
+
+    {{/if}}
+    {{/if}}
+  </div>
+
+  <div class="game-footer btn-group">
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-primary active state">
+        <input type="radio" name="gameview" id="state" autocomplete="off" checked>
+        State
+      </label>
+      <label class="btn btn-primary action">
+        <input type="radio" name="gameview" id="action" autocomplete="off">
+        Action
+      </label>
+      <label class="btn btn-primary chat">
+        <input type="radio" name="gameview" id="chat" autocomplete="off">
+        Chat
+      </label>
+    </div>
+  </div>
+</template>
