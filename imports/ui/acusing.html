@@ -1,9 +1,0 @@
-<template name="acusing">
-  <div class="full-width padded">
-    {{#each players }}
-      {{#if isNotMe id }}
-        <button class="btn btn-primary full-width vote" value="{{id}}">{{name}}</button>
-      {{/if}}
-    {{/each}}
-  </div>
-</template>

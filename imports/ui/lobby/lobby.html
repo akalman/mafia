@@ -1,0 +1,14 @@
+<template name="lobby">
+  {{#if roomDoesNotExist}}
+    {{> creategame}}
+  {{else}} {{#if isHost}}
+  	{{> host}}
+  {{else}} {{#if isPlayer}}
+    {{> player}}
+  {{else}}
+    {{> joingame}}
+
+  {{/if}}
+  {{/if}}
+  {{/if}}
+</template>

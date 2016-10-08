@@ -1,22 +1,21 @@
 <body>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <div class="header">
-    <button class="btn btn-primary nuke">Reset</button>
-    <span>
-      {{ id }}
-      {{ state }}
-    </span>
-  </div>
 
-  <div class="content-area">
-    {{#if showLanding }}
-      {{> landing }}
+  {{#if debug}}
+    <div class="debug-header">
+      <button class="btn btn-primary nuke">Reset</button>
+      <span>
+        {{ id }}
+        {{ state }}
+      </span>
+    </div>
+  {{/if }}
+
+  <div class="body-content">
+    {{#if gameStarted}}
+      {{> game}}
     {{else}}
-      {{#if showHost }}
-        {{> host }}
-      {{else}}
-        {{> player}}
-      {{/if}}
+      {{> lobby}}
     {{/if}}
   </div>
 </body>
