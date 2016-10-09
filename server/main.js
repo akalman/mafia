@@ -23,8 +23,8 @@ const nextPhase = {
 };
 
 const roleOrder = [
-	Roles.Mason,
-	Roles.Mason,
+	Roles.Cop,
+	Roles.Lookout,
 	Roles.Doctor,
 	Roles.Vigilante,
 	Roles.Mafioso,
@@ -32,10 +32,10 @@ const roleOrder = [
 	Roles.Doctor,
 	Roles.MobGrunt,
 	Roles.Villager,
-	Roles.Villager,
-	Roles.Villager,
+	Roles.Mason,
+	Roles.Mason,
 	Roles.MobGrunt,
-	Roles.Villager,
+	Roles.Lookout,
 	Roles.Doctor,
 	Roles.Villager,
 	Roles.Vigilante,
@@ -299,6 +299,19 @@ Meteor.startup(() => {
 									value: target.id,
 									priority: -1
 								});
+								break;
+							case Roles.Cop.name:
+								if (target.role.alignment === Teams.Mafia) {
+									Messages.insert({ id: player.id, from: 'you', content: target.name + ' is a member of the mafia!' });
+								}
+								else {
+									Messages.insert({ id: player.id, from: 'you', content: target.name + ' is not suspicious.' });
+								}
+								break;
+							case Roles.Lookout.name:
+								var visitors = Actions.find({ value: action.value, id: { $ne: action.id } })
+									.map((a) => Players.findOne({ id: a.id }).name);
+								Messages.insert({ id: player.id, from: 'you', content: target.name + ' was visited by ' + visitors.join(', ') });
 								break;
 							case 'Remove Immunity':
 								Players.update(target._id, { $set: { isImmune: target.role.isImmune || false } });
