@@ -13,35 +13,14 @@ import { Teams } from '../imports/types/teams.js';
 import { Roles } from '../imports/types/roles.js';
 import { Phases } from '../imports/types/phases.js'
 
+import { generateRoles } from '../imports/core/generateRoles.js';
+
 const nextPhase = {
 	[Phases.Conversation]: Phases.Accusation,
 	[Phases.Accusation]: Phases.Lynching,
 	[Phases.Lynching]: Phases.Night,
 	[Phases.Night]: Phases.Conversation
 };
-
-const roleOrder = [
-	Roles.Villager,
-	Roles.Lookout,
-	Roles.Doctor,
-	Roles.Cop,
-	Roles.Mafioso,
-	Roles.SerialKiller,
-	Roles.Vigilante,
-	Roles.MobGrunt,
-	Roles.Cop,
-	Roles.Mason,
-	Roles.Mason,
-	Roles.MobGrunt,
-	Roles.Lookout,
-	Roles.Doctor,
-	Roles.Villager,
-	Roles.Vigilante,
-	Roles.MobGrunt,
-	Roles.Villager,
-	Roles.Mason,
-	Roles.Villager
-];
 
 function checkGameOver() {
 	let remainingPlayers = Players
@@ -142,11 +121,12 @@ Meteor.startup(() => {
 			Voices.remove({ });
 		},
 		startGame() {
-			let players = Players.find({ }, { sort: ['id'] }).fetch();
+			let players = Players.find({ }).fetch();
 			if (players.length < 5) {
 				return;
 			}
 
+			let roleOrder = generateRoles(players.length);
 			Games.insert({ state: Phases.Conversation });
 
 			for (let i = 0; i < players.length; i++) {

@@ -11,7 +11,7 @@ Template.body.events({
 
 		var name = event.currentTarget.previousElementSibling.value;
 
-		if (name === 'general' || name === 'you' || name === '') {
+		if (name === 'general' || name === 'you' || name === '' || name.length > 9) {
 			return;
 		}
 
