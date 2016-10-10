@@ -8,7 +8,6 @@ import { Lynchs } from '../imports/api/lynchs.js';
 import { Messages } from '../imports/api/messages.js';
 import { Actions } from '../imports/api/actions.js';
 import { Voices } from '../imports/api/voices.js';
-import { Results } from '../imports/api/results.js';
 
 import { Teams } from '../imports/types/teams.js';
 import { Roles } from '../imports/types/roles.js';
@@ -18,20 +17,19 @@ const nextPhase = {
 	[Phases.Conversation]: Phases.Accusation,
 	[Phases.Accusation]: Phases.Lynching,
 	[Phases.Lynching]: Phases.Night,
-	[Phases.Night]: Phases.NightMessage,
-	[Phases.NightMessage]: Phases.Conversation
+	[Phases.Night]: Phases.Conversation
 };
 
 const roleOrder = [
-	Roles.Cop,
+	Roles.Villager,
 	Roles.Lookout,
 	Roles.Doctor,
-	Roles.Vigilante,
+	Roles.Cop,
 	Roles.Mafioso,
 	Roles.SerialKiller,
-	Roles.Doctor,
+	Roles.Vigilante,
 	Roles.MobGrunt,
-	Roles.Villager,
+	Roles.Cop,
 	Roles.Mason,
 	Roles.Mason,
 	Roles.MobGrunt,
@@ -107,9 +105,7 @@ function ensureMafiaHasKillRole() {
 function simpleKillAction(action, player, target, source) {
 	let result = kill(action.value);
 	if (result) {
-		Results.insert({ id: player.id, msg: 'You successfully killed ' + target.name });
 		Messages.insert({ id: player.id, from: 'you', content: 'You successfully killed ' + target.name });
-		Results.insert({ id: target.id, msg: 'You were killed' });
 		Messages.insert({ id: target.id, from: 'you', content: 'You were killed' });
 		Voices.insert({
 			content: target.name
@@ -128,9 +124,7 @@ function simpleKillAction(action, player, target, source) {
 				+ target.role.name
 		});
 	} else {
-		Results.insert({ id: player.id, msg: target.name + ' was immune' });
 		Messages.insert({ id: player.id, from: 'you', content: target.name + ' was immune' });
-		Results.insert({ id: target.id, msg: 'Someone tried to kill you but you were immune' });
 		Messages.insert({ id: target.id, from: 'you', content: 'Someone tried to kill you but you were immune' });
 	}
 }
@@ -146,7 +140,6 @@ Meteor.startup(() => {
 			Messages.remove({ });
 			Actions.remove({ });
 			Voices.remove({ });
-			Results.remove({ });
 		},
 		startGame() {
 			let players = Players.find({ }, { sort: ['id'] }).fetch();
@@ -170,7 +163,7 @@ Meteor.startup(() => {
 			switch(game.state) {
 				case Phases.Conversation:
 					Voices.insert({ content: 'begin acusing' });
-					Messages.insert({ id: 'global', from: 'global', content: 'begin acusing' });
+					Messages.insert({ id: 'global', from: 'global', content: 'begin accusing' });
 					break;
 				case Phases.Accusation:
 					let votes = Votes.find({ }).fetch();
@@ -322,10 +315,6 @@ Meteor.startup(() => {
 						action = actions.length > 0 ? actions[0] : null;
 					}					
 					ensureMafiaHasKillRole();
-					break;
-				case Phases.NightMessage:
-					Results.remove({ });
-					Messages.remove({ });
 					break;
 			}
 
